@@ -1,35 +1,34 @@
 const fs = require("fs");
 
 const FILE_PATH = "./test.md";
-const patterns = require("./lib/patterns");
+const categories = require("./lib/patterns");
 
 fs.readFile(FILE_PATH, "utf8", (err, data) => {
   if (err) console.log;
 
-  // split file into lines
-  const rawLines = data.split(patterns.lines);
-  const splitLines = rawLines.filter((line) => {
-    return line && line !== "\n" && line !== "<br>";
-  });
+  // split file into lines, remove empties
+  const splitLines = stripEmpty(data.split(/([\r\n$]|<br>)+/));
+  const parsed = [];
 
-  let paragraphCount = 0;
-
-  splitLines.forEach((line) => {
-    console.log("LINE++", line, "\n");
-  });
+  while (splitLines.length > 0) {
+    const element = splitLines.shift();
+    classifyElement(element);
+  }
+  console.log(splitLines.length, parsed.length);
 });
 
-const checkHeading = (line) => {
-  const validHeading = !!line.match(patterns.headings.all);
-
-  if (validHeading) {
-    const type = line.match(patterns.headings.type).length;
-
-    return {
-      type: `h${type}`,
-      content: line.slice(type + 1),
-    };
-  } else {
-    return false;
+const classifyElement = (line) => {
+  let category;
+  for (let key in categories) {
+    if (!!line.match(categories[key])) {
+      category = key;
+    }
   }
+  return category || "invalid element";
 };
+
+const stripEmpty = (arr) => {
+  return arr.filter((i) => {
+    return i && !i.includes("\n") && !i.includes("<br>");
+  });
+}
