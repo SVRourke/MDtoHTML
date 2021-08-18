@@ -7,18 +7,16 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
   if (err) console.log;
 
   // split file into lines
-  const splitLines = data.split(patterns.lines).filter((l) => l);
+  const rawLines = data.split(patterns.lines);
+  const splitLines = rawLines.filter((line) => {
+    return line && line !== "\n" && line !== "<br>";
+  });
 
   let paragraphCount = 0;
 
   splitLines.forEach((line) => {
-    // console.log(checkHeading(line), "\n");
-    // console.log(line, "\n", , "\n\n");
-    if (!!line.match(patterns.paragraph)) paragraphCount++;
-    console.log("LINE++ ", line, "\n");
+    console.log("LINE++", line, "\n");
   });
-
-  console.log(splitLines.length);
 });
 
 const checkHeading = (line) => {
