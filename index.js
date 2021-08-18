@@ -2,6 +2,7 @@ const fs = require("fs");
 
 const FILE_PATH = "./test.md";
 const categories = require("./lib/patterns");
+const { stripEmpty } = require("./lib/formatting");
 
 fs.readFile(FILE_PATH, "utf8", (err, data) => {
   if (err) console.log;
@@ -26,9 +27,3 @@ const classifyElement = (line) => {
   }
   return category || "invalid element";
 };
-
-const stripEmpty = (arr) => {
-  return arr.filter((i) => {
-    return i && !i.includes("\n") && !i.includes("<br>");
-  });
-}
