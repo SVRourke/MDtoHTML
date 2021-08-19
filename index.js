@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const FILE_PATH = "./test.md";
-const categories = require("./lib/patterns");
+const { categories, subElements } = require("./lib/patterns");
 const { stripEmpty } = require("./lib/formatting");
 
 fs.readFile(FILE_PATH, "utf8", (err, data) => {
@@ -9,13 +9,27 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
 
   // split file into lines, remove empties
   const splitLines = stripEmpty(data.split(/([\r\n$]|<br>)+/));
-  const parsed = [];
+  const broadCategorized = [];
 
+  // Broad Categorize
   while (splitLines.length > 0) {
     const element = splitLines.shift();
-    classifyElement(element);
+    broadCategorized.push({
+      category: classifyElement(element),
+      element: element,
+    });
   }
-  console.log(splitLines.length, parsed.length);
+
+  broadCategorized.forEach((e) => {
+    const { category, element } = e;
+
+    if (category === "paragraph") {
+      checkSubElements(element);
+      // console.log(element.match(subElements.bold));
+    }
+  });
+
+  console.log(splitLines.length, broadCategorized.length);
 });
 
 const classifyElement = (line) => {
@@ -27,3 +41,20 @@ const classifyElement = (line) => {
   }
   return category || "invalid element";
 };
+
+const checkSubElements = (line) => {
+  for (let key in subElements) {
+    if (!!line.match(subElements[key])) {
+      console.log("Found a:", key);
+    }
+  }
+};
+
+// split
+// categorize
+// check for sub elements
+// format & push to receptacle
+// combine necessary elements
+// create document
+// add elements
+// save
