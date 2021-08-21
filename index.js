@@ -18,6 +18,7 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
       category: classifyElement(element),
       element: element,
     });
+    // console.log(classifyElement(element), element);
   }
 
   // identify sub elements
@@ -25,31 +26,42 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
     const { category, element } = e;
 
     if (category === "paragraph") {
-      checkSubElements(element);
-      // console.log(element.match(subElements.bold));
+      console.log(anySub(element));
+      // checkSubElements(element);
     }
   });
+  // console.log(broadCategorized[broadCategorized.length - 3]);
 
-  console.log(splitLines.length, broadCategorized.length);
+  // console.log();
 });
+
+const anySub = (line) => {
+  let subEl;
+  Object.entries(subElements).forEach((e) => {
+    if (!!line.match(e[1])) {
+      subEl = e[0];
+    }
+  });
+  return subEl || null;
+};
+
+const checkSubElements = (line) => {
+  for (let key in subElements) {
+    console.log(line);
+    if (!!line.element.match(subElements[key])) {
+      console.log("Found a:", key);
+    }
+  }
+};
 
 const classifyElement = (line) => {
   let category;
   for (let key in categories) {
     if (!!line.match(categories[key])) {
       category = key;
-      console.log(key);
     }
   }
   return category || "invalid element";
-};
-
-const checkSubElements = (line) => {
-  for (let key in subElements) {
-    if (!!line.match(subElements[key])) {
-      console.log("Found a:", key);
-    }
-  }
 };
 
 // split
