@@ -20,6 +20,7 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
     });
   }
 
+  // identify sub elements
   broadCategorized.forEach((e) => {
     const { category, element } = e;
 
@@ -37,6 +38,7 @@ const classifyElement = (line) => {
   for (let key in categories) {
     if (!!line.match(categories[key])) {
       category = key;
+      console.log(key);
     }
   }
   return category || "invalid element";
