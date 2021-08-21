@@ -24,15 +24,8 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
   // identify sub elements
   broadCategorized.forEach((e) => {
     const { category, element } = e;
-
-    if (category === "paragraph") {
-      console.log(anySub(element));
-      // checkSubElements(element);
-    }
+    checkSubElements(element);
   });
-  // console.log(broadCategorized[broadCategorized.length - 3]);
-
-  // console.log();
 });
 
 const anySub = (line) => {
@@ -47,8 +40,7 @@ const anySub = (line) => {
 
 const checkSubElements = (line) => {
   for (let key in subElements) {
-    console.log(line);
-    if (!!line.element.match(subElements[key])) {
+    if (!!line.match(subElements[key])) {
       console.log("Found a:", key);
     }
   }
