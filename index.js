@@ -2,7 +2,7 @@ const fs = require("fs");
 
 const FILE_PATH = "./test.md";
 const { categories, subElements } = require("./lib/patterns");
-const { stripEmpty } = require("./lib/formatting");
+const { stripEmpty, replaceSubElements } = require("./lib/formatting");
 
 fs.readFile(FILE_PATH, "utf8", (err, data) => {
   if (err) console.log;
@@ -23,16 +23,18 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
   // identify sub elements
   broadCategorized.forEach((e) => {
     const { category, element } = e;
-    checkSubElements(element);
+    console.log(checkSubElements(element));
   });
 });
 
 const checkSubElements = (line) => {
+  const subs = [];
   for (let key in subElements) {
     if (!!line.match(subElements[key])) {
-      console.log("Found a:", key);
+      subs.push(key);
     }
   }
+  return subs.some((e) => e) ? subs : null;
 };
 
 const classifyElement = (line) => {
@@ -42,7 +44,7 @@ const classifyElement = (line) => {
       category = key;
     }
   }
-  return category || "invalid element";
+  return category || null;
 };
 
 // check for sub elements
