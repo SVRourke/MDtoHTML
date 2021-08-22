@@ -18,7 +18,6 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
       category: classifyElement(element),
       element: element,
     });
-    // console.log(classifyElement(element), element);
   }
 
   // identify sub elements
@@ -27,16 +26,6 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
     checkSubElements(element);
   });
 });
-
-const anySub = (line) => {
-  let subEl;
-  Object.entries(subElements).forEach((e) => {
-    if (!!line.match(e[1])) {
-      subEl = e[0];
-    }
-  });
-  return subEl || null;
-};
 
 const checkSubElements = (line) => {
   for (let key in subElements) {
@@ -56,8 +45,6 @@ const classifyElement = (line) => {
   return category || "invalid element";
 };
 
-// split
-// categorize
 // check for sub elements
 // format & push to receptacle
 // combine necessary elements
