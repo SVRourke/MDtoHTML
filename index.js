@@ -11,7 +11,7 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
   const splitLines = stripEmpty(data.split(/([\r\n$]|<br>)+/));
   const broadCategorized = [];
 
-  // Broad Categorize
+  // broadly categorize the lines
   while (splitLines.length > 0) {
     const element = splitLines.shift();
     broadCategorized.push({
@@ -20,13 +20,46 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
     });
   }
 
-  // identify sub elements
+  // check for nested elements
+
+  // identify format elements
   broadCategorized.forEach((e) => {
-    const { category, element } = e;
-    console.log(checkSubElements(element));
+    let { category, element } = e;
+    const formatElements = checkSubElements(element);
+    if (!!formatElements) {
+      formatElements.forEach((e) => {
+        element = replacements[e](element);
+      });
+    }
   });
 });
 
+// ---------------------  REPLACEMENT OPS ------------------------
+const replacements = {
+  bold: (e) => {
+    return e.replace(/\*{2}[\w\s]+\*{2}/g, (a, b, c, d) => {
+      return `<strong>${a.replace(/\*{2}/g, "")}</strong>`;
+    });
+  },
+
+  italic: (e) => {
+    return = e.replace(/\_[\w\s]+\_/g, (a, b, c, d) => {
+      return `<em>${a.replace(/\_/g, "")}</em>`;
+    });
+  },
+
+  quoteNestedUl: (e) => {
+    console.log("quote nested ul REPLACEMENTS");
+  },
+  quoteNestedOl: (e) => {
+    console.log("quote nested ol REPLACEMENTS");
+  },
+  quoteNestedQuote: (e) => {
+    console.log("quote nested quote REPLACEMENTS");
+  },
+};
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 const checkSubElements = (line) => {
   const subs = [];
   for (let key in subElements) {
