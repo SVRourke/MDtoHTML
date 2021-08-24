@@ -18,69 +18,11 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
   });
 
   instances.forEach((i) => {
-    console.log(i, i.broadCategory);
+    console.log(i);
   });
-  // broadly categorize
-  // const broad = splitLines.map((line) => {
-  //   return {
-  //     category: classifyElement(line),
-  //     element: line,
-  //   };
-  // });
-
-  // sub out format elements
-  // const subbed = subformatting(broad);
-
-  // continue doing stuff
-  // subbed.forEach((e) => console.log(e));
 });
 
-// UTILS BELOW
-
-const subformatting = (arr) => {
-  const subbed = [];
-  arr.forEach((line) => {
-    let { category, element } = line;
-    const formats = checkSubElements(element);
-
-    if (!!formats) {
-      formats.forEach((e) => {
-        element = replacements[e](element);
-      });
-    }
-
-    subbed.push({
-      category: category,
-      element: element,
-    });
-  });
-  return subbed;
-};
-
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-const checkSubElements = (line) => {
-  const subs = [];
-  for (let key in formatElements) {
-    if (!!line.match(formatElements[key])) {
-      subs.push(key);
-    }
-  }
-  return subs.some((e) => e) ? subs : null;
-};
-
-const classifyElement = (line) => {
-  let category;
-  for (let key in categories) {
-    if (!!line.match(categories[key])) {
-      category = key;
-    }
-  }
-  return category || null;
-};
-
 // check for sub elements
-// format & push to receptacle
-// combine necessary elements
 // create document
 // add elements
 // save
