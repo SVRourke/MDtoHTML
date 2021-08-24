@@ -17,9 +17,39 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
     instances.push(new Element(e));
   });
 
-  instances.forEach((i) => {
-    console.log(i);
-  });
+  while (instances.length > 0) {
+    const currentInstance = instances.shift();
+    const parts = [currentInstance];
+    let searching;
+
+    if (!currentInstance.composible) {
+      searching = false;
+      console.log("NOT", currentInstance.broadCategory);
+    } else {
+      searching = true;
+    }
+
+    while (searching) {
+      console.log(instances[0].composible);
+      if (
+        instances[0].composible &&
+        currentInstance.broadCategory === instances[0].broadCategory
+      ) {
+        parts.push(instances.shift());
+      } else searching = false;
+    }
+    console.log(parts);
+  }
+
+  // instances.forEach((i, idx) => {
+  //   if (i.composible) {
+  //     for (let second = idx + 1; second < instances.length; second++) {
+  //       if (instances[second].broadCategory === i.broadCategory) {
+  //       }
+  //     }
+  //   }
+  //   console.log(i, a);
+  // });
 });
 
 // check for sub elements
