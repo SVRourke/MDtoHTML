@@ -37,3 +37,7 @@ paragraph 13 Anim exercitation **_bold & italic_** deserunt excepteur reprehende
 > - unordered List
 >
 > 1. ordered List
+
+- first
+- second
+- third
