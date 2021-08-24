@@ -9,7 +9,7 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
 
   // split file into lines, remove empties
   const splitLines = stripEmpty(data.split(/([\r\n$]|<br>)+/));
-  
+
   // broadly categorize
   const broad = splitLines.map((line) => {
     return {
@@ -22,7 +22,7 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
   const subbed = subformatting(broad);
 
   // continue doing stuff
-  subbed.forEach((e) => console.log(e));
+  // subbed.forEach((e) => console.log(e));
 });
 
 const subformatting = (arr) => {
@@ -63,7 +63,7 @@ const replacements = {
   },
 
   quoteNestedUl: (e) => {
-    console.log("quote nested ul REPLACEMENTS");
+    return wrapElement(e, /\s-[\s\w]*/g, /\s-\s\b/g, "<li>|</li>");
   },
   quoteNestedOl: (e) => {
     console.log("quote nested ol REPLACEMENTS");
