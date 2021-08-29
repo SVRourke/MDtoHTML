@@ -12,34 +12,36 @@ fs.readFile(FILE_PATH, "utf8", (err, data) => {
   // split file into lines, remove empties
   const splitLines = stripEmpty(data.split(/([\r\n$]|<br>)+/));
 
-  const instances = [];
-  splitLines.forEach((e) => {
-    instances.push(new Element(e));
-  });
+  console.log(data.split(/^\s*$/gm));
 
-  while (instances.length > 0) {
-    const currentInstance = instances.shift();
-    const parts = [currentInstance];
-    let searching;
+  // const instances = [];
+  // splitLines.forEach((e) => {
+  //   instances.push(new Element(e));
+  // });
 
-    if (!currentInstance.composible) {
-      searching = false;
-      console.log("NOT", currentInstance.broadCategory);
-    } else {
-      searching = true;
-    }
+  // while (instances.length > 0) {
+  //   const currentInstance = instances.shift();
+  //   const parts = [currentInstance];
+  //   let searching;
 
-    while (searching) {
-      console.log(instances[0].composible);
-      if (
-        instances[0].composible &&
-        currentInstance.broadCategory === instances[0].broadCategory
-      ) {
-        parts.push(instances.shift());
-      } else searching = false;
-    }
-    console.log(parts);
-  }
+  //   if (!currentInstance.composible) {
+  //     searching = false;
+  //     console.log("NOT", currentInstance.broadCategory);
+  //   } else {
+  //     searching = true;
+  //   }
+
+  //   while (searching) {
+  //     console.log(instances[0].composible);
+  //     if (
+  //       instances[0].composible &&
+  //       currentInstance.broadCategory === instances[0].broadCategory
+  //     ) {
+  //       parts.push(instances.shift());
+  //     } else searching = false;
+  //   }
+  //   console.log(parts);
+  // }
 
   // instances.forEach((i, idx) => {
   //   if (i.composible) {
