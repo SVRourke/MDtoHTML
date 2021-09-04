@@ -1,60 +1,63 @@
 const fs = require("fs");
+const { recognition, parse, parseOuter } = require("./lib/patterns.js");
 
 const FILE_PATH = "./test.md";
-const { categories, formatElements, subElements } = require("./lib/patterns");
-const { stripEmpty } = require("./lib/formatting");
-const { replacements } = require("./lib/subElements");
-const Element = require("./lib/element");
+
+const matchEl = (text, obj) => {
+  return !!text.match(obj["recog"]);
+};
 
 fs.readFile(FILE_PATH, "utf8", (err, data) => {
   if (err) console.log;
 
-  // split file into lines, remove empties
-  const splitLines = stripEmpty(data.split(/([\r\n$]|<br>)+/));
+  data = data.split(/(\n{2}|\s{2})/gm);
+  data = data.filter((e) => !e.match(/(\n{2}|\s{2})/));
 
-  console.log(data.split(/^\s*$/gm));
+  // const parsed = [];
 
-  // const instances = [];
-  // splitLines.forEach((e) => {
-  //   instances.push(new Element(e));
-  // });
+  data.slice(0).forEach((e) => {
+    const parsed = parseOuter(e);
+    replaceFormats(parsed);
 
-  // while (instances.length > 0) {
-  //   const currentInstance = instances.shift();
-  //   const parts = [currentInstance];
-  //   let searching;
+    // Parse sub elements
+    const splitContent = parsed.content.split(/\n/gm);
+    const present = splitContent.some((c) => categorize(c));
 
-  //   if (!currentInstance.composible) {
-  //     searching = false;
-  //     console.log("NOT", currentInstance.broadCategory);
-  //   } else {
-  //     searching = true;
-  //   }
+    if (present) {
+      parsed.subElements = splitContent.map((c) => ({
+        category: categorize(c),
+        content: c,
+      }));
+    }
 
-  //   while (searching) {
-  //     console.log(instances[0].composible);
-  //     if (
-  //       instances[0].composible &&
-  //       currentInstance.broadCategory === instances[0].broadCategory
-  //     ) {
-  //       parts.push(instances.shift());
-  //     } else searching = false;
-  //   }
-  //   console.log(parts);
-  // }
-
-  // instances.forEach((i, idx) => {
-  //   if (i.composible) {
-  //     for (let second = idx + 1; second < instances.length; second++) {
-  //       if (instances[second].broadCategory === i.broadCategory) {
-  //       }
-  //     }
-  //   }
-  //   console.log(i, a);
-  // });
+    console.log(parsed);
+    console.log("\n");
+  });
 });
 
-// check for sub elements
-// create document
-// add elements
-// save
+const categorize = (e) => {
+  let category;
+
+  for (const pattern in recognition) {
+    if (e.match(recognition[pattern])) {
+      category = pattern;
+    }
+  }
+  return category !== "paragraph" ? category : null;
+};
+
+const replaceFormats = (element) => {
+  for (const func of formats) {
+    element.content = func(element.content);
+  }
+};
+
+const formats = [
+  (e) => {
+    return e.replace(/\*{2}(.+?)\*{2}/g, "<strong>$1</strong>");
+  },
+
+  (e) => {
+    return e.replace(/\_(.+?)\_/g, "<em>$1</em>");
+  },
+];
