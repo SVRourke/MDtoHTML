@@ -1,63 +1,20 @@
-const fs = require("fs");
-const { recognition, parse, parseOuter } = require("./lib/patterns.js");
+const { parser } = require("./lib/parser");
+const { wrappers } = require("./lib/builder/wrappaterns");
 
-const FILE_PATH = "./test.md";
+let parsedDoc = parser("./test.md", "utf8");
 
-const matchEl = (text, obj) => {
-  return !!text.match(obj["recog"]);
-};
+const newDoc = [];
 
-fs.readFile(FILE_PATH, "utf8", (err, data) => {
-  if (err) console.log;
+for (const segment of parsedDoc) {
+  const compound = segment.hasOwnProperty("subElements");
+  const { type, content } = segment;
 
-  data = data.split(/(\n{2}|\s{2})/gm);
-  data = data.filter((e) => !e.match(/(\n{2}|\s{2})/));
+  let newElement;
 
-  // const parsed = [];
-
-  data.slice(0).forEach((e) => {
-    const parsed = parseOuter(e);
-    replaceFormats(parsed);
-
-    // Parse sub elements
-    const splitContent = parsed.content.split(/\n/gm);
-    const present = splitContent.some((c) => categorize(c));
-
-    if (present) {
-      parsed.subElements = splitContent.map((c) => ({
-        category: categorize(c),
-        content: c,
-      }));
-    }
-
-    console.log(parsed);
-    console.log("\n");
-  });
-});
-
-const categorize = (e) => {
-  let category;
-
-  for (const pattern in recognition) {
-    if (e.match(recognition[pattern])) {
-      category = pattern;
-    }
+  if (compound) {
+    console.log("Compound", segment.subElements); // assign to newElement
+  } else {
+    newElement = wrappers[segment.type](segment.content); // assign to newElement
   }
-  return category !== "paragraph" ? category : null;
-};
-
-const replaceFormats = (element) => {
-  for (const func of formats) {
-    element.content = func(element.content);
-  }
-};
-
-const formats = [
-  (e) => {
-    return e.replace(/\*{2}(.+?)\*{2}/g, "<strong>$1</strong>");
-  },
-
-  (e) => {
-    return e.replace(/\_(.+?)\_/g, "<em>$1</em>");
-  },
-];
+  newDoc.push(newElement);
+}
