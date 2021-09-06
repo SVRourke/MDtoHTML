@@ -10,27 +10,17 @@ for (const segment of parsedDoc) {
   const { type, content, subElements } = segment;
 
   if (compound) {
-    const result = subElements.reduce(reducerfunction, []);
+    const result = subElements.reduce((accumulator, current) => {
+      const lastAdded = accumulator[accumulator.length - 1];
 
-    console.log("Compound"); // assign to newElement
+      if (lastAdded && lastAdded.category === current.category)
+        lastAdded.content += `\n${current.content}`;
+      else accumulator.push({ ...current });
+      return accumulator;
+    }, []);
+    console.log("Compound", result); // assign to newElement
   } else {
     newElement = wrappers[segment.type](segment.content); // assign to newElement
   }
   newDoc.push(newElement);
 }
-
-// start
-// 1 shift the first element
-// 2 add content to array,
-// 3 if the new first element is the same goto 1
-// 3.1 if not the same, push new array to newSubelements as obj with category
-// goto 1
-
-const result = activities.reduce((r, o) => {
-  const last = r[r.length - 1];
-  
-  if(last && last.type === o.type) last.duration += o.duration;
-  else r.push({ ...o });
-  
-  return r;
-}, []);
