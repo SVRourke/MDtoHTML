@@ -24,3 +24,6 @@ for (const segment of parsedDoc) {
   }
   newDoc.push(newElement);
 }
+newDoc.forEach((e) => {
+  console.log(e);
+});
