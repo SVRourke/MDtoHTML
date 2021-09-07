@@ -5,25 +5,31 @@ let parsedDoc = parser("./test.md", "utf8");
 
 const newDoc = [];
 
-for (const segment of parsedDoc) {
-  const compound = segment.hasOwnProperty("subElements");
-  const { type, content, subElements } = segment;
+const wrapSubElements = (element) => {
+  element.content = element.subElements
+    .map((e) => wrappers[e.type](e.content))
+    .reduce((acc, curr) => (acc += curr));
+};
+
+const wrapElement = (element) => {
+  const compound = element.hasOwnProperty("subElements");
+  let { content, type } = element;
+  if (compound) wrapSubElements(element);
+  element.content = wrappers[type](content);
+};
+
+for (const element of parsedDoc) {
+  const compound = element.hasOwnProperty("subElements");
+  let { content, type } = element;
 
   if (compound) {
-    const result = subElements.reduce((accumulator, current) => {
-      const lastAdded = accumulator[accumulator.length - 1];
-
-      if (lastAdded && lastAdded.category === current.category)
-        lastAdded.content += `\n${current.content}`;
-      else accumulator.push({ ...current });
-      return accumulator;
-    }, []);
-    console.log("Compound", result); // assign to newElement
-  } else {
-    newElement = wrappers[segment.type](segment.content); // assign to newElement
+    element.content = element.subElements
+      .map((e) => wrappers[e.type](e.content))
+      .reduce((acc, curr) => (acc += curr));
   }
-  newDoc.push(newElement);
+
+  element.content = wrappers[type](content);
 }
-newDoc.forEach((e) => {
+parsedDoc.forEach((e) => {
   console.log(e);
 });
